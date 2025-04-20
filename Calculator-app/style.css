@@ -1,0 +1,15 @@
+#calculation { 
+  display: flex;  
+}
+
+#display {
+  height: 40px;
+  width: 35%;
+  font-size:30px;
+}
+#operators {
+  display: flex;
+  flex-direction: column; 
+}
+
+

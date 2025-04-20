@@ -1,0 +1,143 @@
+<!--要件定義
+★アプリの目的★
+数字ボタンと演算子ボタンを配置して計算できる
+イコールボタンで計算結果を出力
+クリアボタンでリセットできる
+
+★UIに必要なパーツ★
+表示用の画面
+数字ボタン
+イコールボタン(=)とクリアボタン(C)
+
+★必ず使う機能・考え方
+各ボタンにイベントを付与
+入力された値を保存
+式を作って最終的にeval()で計算する
+クリアボタンで変数と表示をリセット
+-->
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>Calculator App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Calculator App</h1>
+    <input type="text" id="display" readonly>
+    <div id="calculation">
+      <div id="numbers">
+        <button class="number">9</button>
+        <button class="number">8</button>
+        <button class="number">7</button>
+        <br>
+        <button class="number">6</button>
+        <button class="number">5</button>
+        <button class="number">4</button>
+        <br>
+        <button class="number">3</button>
+        <button class="number">2</button>
+        <button class="number">1</button>
+        <br>
+        <button class="number">0</button>  
+        <button class="number">00</button>   
+        <button class="number">.</button>
+      </div>
+      <div id="operators">  
+        <button class="operator">+</button>
+        <button class="operator">-</button>
+        <button class="operator">x</button>
+        <button class="operator">÷</button>
+        <button id="equal">=</button>
+        <button id="clear">C</button>
+      </div>  
+    </div>
+
+    <script>     
+      
+      
+      
+      //HTMLから必要な要素を取得する
+      
+      //表示画面を取得
+      const monitor = document.getElementById("display");
+      
+      //各数字を取得⇒数字を表示------------------------------
+
+      //数字要素のNodeListを取得
+      const btns = document.querySelectorAll(".number");
+
+      //forEachでそれぞれにイベント処理を加える
+      btns.forEach((btn)=>{
+        btn.addEventListener("click", addNumToMonitor);
+      });
+
+      //各数字にクリックしたら画面に表示される関数を設定
+      function addNumToMonitor(e) {        
+        const value = e.target.textContent;      
+        monitor.value += value;
+      }  
+      //---------------------------------------------------
+
+
+      //算術演算子の機能を実装-------------------------------
+
+      //算術演算子をまとめて取得
+      const operators = document.querySelectorAll(".operator");
+
+      //算術演算子に順番にイベント処理を実装
+      operators.forEach((op)=>{
+        op.addEventListener("click",addOpToMonitor)
+      });
+
+      //算術演算子に関数を実装 (+-x÷で処理を変える必要あり)
+      function addOpToMonitor(e) {
+        //モニターに算術演算子を追加する
+        switch (e.target.textContent) {
+          case "+":
+            monitor.value += "+";
+            break;
+          case "-":
+            monitor.value += "-";
+            break;
+          case "x":
+            monitor.value += "*";
+            break;
+          case "÷":
+            monitor.value += "/" 
+            break;            
+        };       
+      };
+
+      //----------------------------------------------------
+      
+
+      //イコール記号による計算機能を実装----------------------
+      const equal = document.getElementById("equal");
+      
+      equal.addEventListener("click", ()=>{
+        monitor.value = eval(monitor.value);
+      });
+
+      //---------------------------------------------------
+
+      //Clearの要素を取得⇒その処理を実装------------
+      
+      
+     
+      const clear = document.getElementById("clear");
+      clear.addEventListener("click", clearMonitor);
+      function clearMonitor() {
+        monitor.value = "";
+      }
+      //----------------------------------------------
+
+      
+      
+      
+
+    </script>
+  </body>
+</html>
