@@ -1,19 +1,25 @@
 <!--要件定義
 ★アプリの目的★
-数字ボタンと演算子ボタンを配置して計算できる
-イコールボタンで計算結果を出力
-クリアボタンでリセットできる
+  数字ボタンと演算子ボタンを配置して計算できる
+  イコールボタンで計算結果を出力
+  クリアボタンでリセットできる
 
 ★UIに必要なパーツ★
-表示用の画面
-数字ボタン
-イコールボタン(=)とクリアボタン(C)
+  表示用の画面
+  数字ボタン
+  イコールボタン(=)とクリアボタン(C)
 
 ★必ず使う機能・考え方
-各ボタンにイベントを付与
-入力された値を保存
-式を作って最終的にeval()で計算する
-クリアボタンで変数と表示をリセット
+　各ボタンにイベントを付与
+  入力された値を保存
+  式を作って最終的にeval()で計算する
+  クリアボタンで変数と表示をリセット
+
+★実装するバリデーション
+　演算子の連続入力防止
+　先頭に演算子を入力
+  表示桁数が超過した時のエラー表示
+  小数点の連続入力防止
 -->
 
 <!DOCTYPE html>
@@ -52,32 +58,37 @@
         <button class="operator">÷</button>
         <button id="equal">=</button>
         <button id="clear">C</button>
+        <button id="erase">⇐</button>
       </div>  
     </div>
 
     <script>     
-      
-      
-      
-      //HTMLから必要な要素を取得する
-      
+                              
       //表示画面を取得
       const monitor = document.getElementById("display");
       
-      //各数字を取得⇒数字を表示------------------------------
+      //各数字を取得⇒数字をクリックで画面に表示-------------------
 
       //数字要素のNodeListを取得
       const btns = document.querySelectorAll(".number");
 
-      //forEachでそれぞれにイベント処理を加える
+      //forEachでNodeList内のそれぞれの要素にイベント処理を加える
       btns.forEach((btn)=>{
         btn.addEventListener("click", addNumToMonitor);
       });
 
-      //各数字にクリックしたら画面に表示される関数を設定
+      //数字をクリックしたら画面に表示される関数を設定
+      //eはイベント発生時の情報をまとめたもの。
+      //e.targetはその中の実際にクリックされたHTML要素その物を指す。
+      //e.target.textContentはHTML要素の中身となるテキストを表す。
+      //追記：eそれ自体にこのような意味を持つのではなく、⇓⇓
+      // addEventListenerの第二引数にされた関数の引数にこのような情報が与えられる。
+      //厳密にはその情報が入ったイベントオブジェクトが渡されている。
       function addNumToMonitor(e) {        
-        const value = e.target.textContent;      
+        const value = e.target.textContent;    
         monitor.value += value;
+        lastInput = value;
+        checkOverflow()
       }  
       //---------------------------------------------------
 
@@ -86,6 +97,8 @@
 
       //算術演算子をまとめて取得
       const operators = document.querySelectorAll(".operator");
+      //最後に入力された値を記録
+      let lastInput = "";
 
       //算術演算子に順番にイベント処理を実装
       operators.forEach((op)=>{
@@ -94,47 +107,93 @@
 
       //算術演算子に関数を実装 (+-x÷で処理を変える必要あり)
       function addOpToMonitor(e) {
+        const op = e.target.textContent;
+
+        //最初に演算子を押すのを防ぐ
+        if (lastInput === "") {
+          return; //何も入力されていないなら演算子は無視
+        }
+        //演算子の連続入力防止
+        if (["+","-","*","/"].includes(lastInput)) {
+          return;
+        }
         //モニターに算術演算子を追加する
         switch (e.target.textContent) {
           case "+":
             monitor.value += "+";
+            lastInput = "+";            
             break;
           case "-":
             monitor.value += "-";
+            lastInput = "-";           
             break;
           case "x":
             monitor.value += "*";
+            lastInput = "*";
             break;
           case "÷":
-            monitor.value += "/" 
+            monitor.value += "/"             
+            lastInput = "/";
             break;            
-        };       
+        };    
+        
+        checkOverflow();
       };
 
-      //----------------------------------------------------
-      
+      //----------------------------------------------------           
 
       //イコール記号による計算機能を実装----------------------
       const equal = document.getElementById("equal");
       
       equal.addEventListener("click", ()=>{
-        monitor.value = eval(monitor.value);
+        let expression = monitor.value.replace(/,/g, ""); //カンマ全削除
+        let result = eval(expression);//カンマなしで計算
+        
+        //桁数チェック(エラー判定)
+        if (String(result).length > 15) {
+         monitor.value = "Error";
+         lastInput = "";
+        } else {
+          monitor.value = Number(result).toLocaleString();//カンマ付きに変換して表示
+          lastInput = "";//必要ならリセット
+          }      
       });
 
       //---------------------------------------------------
 
-      //Clearの要素を取得⇒その処理を実装------------
-      
-      
-     
+      //Clearの要素を取得⇒その処理を実装------------     
+           
       const clear = document.getElementById("clear");
       clear.addEventListener("click", clearMonitor);
+      
       function clearMonitor() {
         monitor.value = "";
+        lastInput = "";
       }
       //----------------------------------------------
 
-      
+      //⇐ボタンの要素取得とその処理の実装
+      const erase = document.getElementById("erase");
+
+      erase.addEventListener("click", ()=> {
+        if (monitor.value === "Error") {
+          return; //エラー表示中は削除できないようにする
+        }
+        //slice(開始位置,終了位置)は、文字や配列を”切り取って新しく作成”する
+        //ここでは先頭から始めて最後の一文字だけを除いた部分を取り出すという意味
+        monitor.value = monitor.value.slice(0, -1);
+        lastInput = monitor.value.slice(-1);
+      });
+      //-------------------------------------------------
+
+      //表示桁数チェックのバリデーション-----------------------
+      function checkOverflow() {
+        const maxDigits = 15;
+        if (monitor.value.length > maxDigits) {
+          monitor.value = "Error";
+          lastInput = "";
+        }
+      }
       
       
 
