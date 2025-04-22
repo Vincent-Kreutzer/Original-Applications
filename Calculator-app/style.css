@@ -1,15 +1,76 @@
-#calculation { 
-  display: flex;  
+/*
+1.画面（モニター）を見やすく大きくする
+2.ボタンの大きさ・間隔を整えて押しやすくする
+3.全体のレイアウトを中央に揃える
+4.色やフォントをちょっとオシャレにする
+*/
+
+/*全体の中央ぞろえ*/
+body {
+  display: flex;
+  flex-direction: column;  
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+  margin: 0;
 }
 
-#display {
-  height: 40px;
-  width: 40%;
-  font-size:40px;
-}
-#operators {
+/*電卓全体*/
+#calculation { 
   display: flex;
-  flex-direction: column; 
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+/*モニター*/
+#display {
+  width: 50%;
+  min-width:400px;
+  height: 60px;  
+  font-size: 45px;
+  text-align: right; /*文字の水平方向の寄せ位置*/
+  margin-bottom: 20px;
+  padding: 10px;
+  box-sizing: border-box; /*paddingとborderがwidthとheightに含まれるようになる*/
+}
+
+/* ボタン共通 */
+button {
+  width: 60px;
+  height: 60px;
+  font-size: 35px;
+  margin: 5px;
+  border: none;/*境界線をなくしたので、枠線の色もなくなる*/
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  cursor: pointer;/*カーソルと近づけると指に変わる*/
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #d0d0d0;
+}
+
+button:active {
+  transform: scale(0.95);/*見た目の形・動きを一瞬で変えるプロパティ*/
+  background-color: #c0c0c0;
+}
+
+/*数字ボタンエリア*/
+#numbers {
+  display: grid;
+  grid-template-columns: repeat(3,70px); /*3列で並べる*/
+  grid-gap: 5px;
+}
+
+/*演算子ボタンエリア*/
+#operators {
+  display:grid;
+  grid-template-columns: repeat(2, 70px);
+  grid-gap: 5px;
+  margin-left: 15px;
 }
 
 
