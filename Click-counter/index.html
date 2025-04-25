@@ -1,0 +1,116 @@
+<!--
+★要件定義★
+カウント対象ボタンを設置。ボタンを押すと1ずつカウントが増える。
+リセットボタンを設置。ボタンを押すとカウントされた値が初期がされる。
+
+アルゴリズム
+数値を入れる変数を一つ用意する
+クリック操作でその数値を増減させる。
+変数の数値をHTML上で表示させる。
+まず、クリックで増加するボタンを作る。
+その後減少するボタンや倍増するボタン、半分になっていくボタンを実装する。
+
+-->
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>Click Counter Application</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body>
+    <h2>Click Counter Application</h2>
+    <label>ここにクリック回数を表示：<h1 id="num-display"></h1></label>
+    <button id="count-btn">Click</button>
+    <button id="dec-btn">Decrease</button>
+    <button id="reset-btn">Reset</button>
+    <button id="boost-btn">Boost</button>
+    <button id="multiply-btn">Multiply</button>
+    <button id="inhalf-btn">Half</button>
+    <script>
+      //カウント数を入れる変数
+      let countNum = 0;
+
+      //各HTML要素の値
+      const numDisplay = document.getElementById("num-display");
+      const countBtn = document.getElementById("count-btn");
+      const decBtn = document.getElementById("dec-btn");
+      const resetBtn = document.getElementById("reset-btn");
+      const boostBtn = document.getElementById("boost-btn");
+      const multiplyBtn = document.getElementById("multiply-btn");
+      const inHalfBtn = document.getElementById("inhalf-btn");
+
+
+      //カウントイベント実装==============================
+      countBtn.addEventListener("click", plusNum);
+
+      //数を増やす関数
+      function plusNum() {
+        countNum ++;
+        numDisplay.textContent = countNum;
+        numDisplay.textContent = countNum;
+        if (countNum > 100) {
+          alert("カウントが100を超えました！")
+        };
+      };
+      //==================================================
+
+
+      //マイナスボタン実装=================================
+      decBtn.addEventListener("click",decNum);
+
+      function decNum() {
+        countNum --;
+        numDisplay.textContent = countNum;
+        if (countNum < 0) {
+          alert("カウントがマイナスになりました！")
+        };
+      }
+      //==================================================
+
+
+      //リセットイベント実装================================
+      resetBtn.addEventListener("click", ()=>{        
+        countNum = 0;
+        numDisplay.textContent = countNum;  
+       });
+      //===================================================
+
+
+      //＋10イベント実装====================================
+      boostBtn.addEventListener("click", ()=>{
+        countNum += 10;
+        numDisplay.textContent = countNum;
+        if (countNum > 100) {
+          alert("カウントが100を超えました！")
+        };
+      })
+      //=====================================================
+
+
+      //倍掛けイベント実装====================================
+      multiplyBtn.addEventListener("click",()=>{
+        if (countNum === 0) {
+          alert("値が0なので掛けることが出来ません！");
+          return;
+        }        
+        countNum *= 2;
+        numDisplay.textContent = countNum;        
+      });
+      //====================================================
+
+
+      //半減イベント実装======================================
+      inHalfBtn.addEventListener("click",()=> {      
+        if (countNum === 0) {
+          alert("値が0なので割ることは出来ません！");
+          return;
+        }        
+        countNum /= 2;
+        numDisplay.textContent = countNum;        
+        });
+      //=====================================================
+    </script>
+  </body>
+</html>
