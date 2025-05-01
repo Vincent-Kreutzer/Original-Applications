@@ -1,0 +1,12 @@
+#table {
+  border-collapse: collapse; /*セル同士を密着させる*/
+  
+}
+
+td {
+  width: 45px;
+  height: 45px;
+  border: 1px solid black;
+  text-align: center;
+  vertical-align: middles;
+}

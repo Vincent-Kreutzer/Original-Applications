@@ -1,0 +1,137 @@
+<!--
+★このプログラムコーディング中に気付いた重要なこと！★
+forEachは「対象の配列・リストのすべての要素に、同じ処理をする」
+→ この「同じ処理を一気にやる」というイメージが大事！
+→ 第二引数として私た値ががｲﾝﾃﾞｯｸｽの意味を持つ！！
+対して、通常のfor文は「ループのたびに1個だけ処理して次に進む」
+→ インデックスでピンポイントに指定できる！
+
+★要件定義★
+テーブルタグで９ｘ９のマスを作る
+縦横のセルに１～９を並べる⇒縦横で数字の重複禁止！！
+その中の３ｘ３のマスも数字の重複禁止！！
+
+【ステップ1：検証関数の設計】
+
+✅ 確認すべき3つのポイント：
+同じ行（row）にその数字がすでにないか？
+同じ列（col）にその数字がすでにないか？
+同じブロック（3×3）にその数字がすでにないか？
+
+✅ 2重配列（9×9の二次元配列）を用意する
+✅ 各行に対してランダムに1〜9の数字を埋める
+→ ただし「同じ列に同じ数字が入らない」制約をつける！
+✅ その結果できた9×9の盤面が「正解盤面」になる
+✅ そこからセルをランダムに抜いて問題にする（空白を作る）
+✅ プレイヤーは空白マスに適切な数字を選んで正解を埋める
+
+★機能★
+問題の自動作成
+経過時間観察、制限時間を設ける
+ミスの回数を制限してゲームオーバーになるようにする
+ヒント機能
+難易度選択（空白のセルの量を調整？調べてその他のロジックを追加）
+ユーザーが自分で枠線や数字の色をカスタマイズ出来る
+-->
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>Original Sudoku App</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Original Sudoku App</h1>
+
+    <table id="sudoku">
+      <!--テーブル内の要素のイメージ
+      <tr class="row"><td class="cell"></td><td class="cell"></td><td class="cell"></td><td class="cell"></td><td class="cell"></td><td class="cell"></td><td class="cell"></td><td class="cell"></td><td class="cell"></td></tr>
+      -->
+
+      <script>
+
+        const table = document.getElementById("sudoku");        
+        //CHAPTER1:盤面作成============================================
+        //テーブル自動作成のforループ=======================================
+        for (let row=0;row<9;row++) {
+          //外側ループで各行を作成
+          const tr = document.createElement("tr");
+          tr.classList.add("rows");
+          //内側ループで各行内のセルを作成
+          for (let col=0;col<9;col++) {
+            const td = document.createElement("td");
+
+            //各セルにID(0~8)付与:カウンター変数の変動する値を入れて行列番号を入れる
+            td.id = `cell-${row}-${col}`;
+
+            //データ属性（ブロック番号も0~8）
+            //データ属性を通じて各セルがどのブロックに属するかを計算して記録、設定          
+            const block = Math.floor(row/3)*3+Math.floor(col/3);
+            td.dataset.block = block;
+
+            //スタイル
+            td.style.border = "1px solid #000";
+            td.style.width = "40px";
+            td.style.height = "40px";
+            td.style.textAlign = "center";
+            
+            //各td要素をHTML上に実際に追加
+            tr.appendChild(td);
+          }//内側forループ
+
+          //各tr要素をHTML上に実際に追加
+          table.appendChild(tr);
+        }//外側forループ
+        //========================================================
+
+
+        //各セルに１～９の数字をランダムに表示するイベント==============
+        
+        window.addEventListener("load", numSet);
+              
+
+        //１～９の数字を用意する。乱数を９つ用意して、ペアにする。
+        // このペアを適当な順に並び替えればランダムに数字を並べることが出来る
+
+        //一つ値を入れるときに重複が無いかを確認する　すでに使った値をリストに入れる。)
+        
+        
+        //関数：セル全体に対する繰返し処理　=> ランダムな値（但し重複無し）を入れる==============
+        function numSet() {
+          const rows = table.querySelectorAll("tr");
+
+          //行単位の繰返し（大）
+          rows.forEach((row)=>{
+            let objectsArray = [];//オブジェクト群を入れる配列
+            let numObject = {};//繰返し番号と乱数を入れるオブジェクト
+            let cellsInRow = [];//各行のセルを入れる
+
+            //乱数の取得（ナンバリング変数と乱数をオブジェクトに入れる。）====================
+            for (let i=1;i<10;i++) {          
+              numObject = {num:i, randNum:Math.random()}
+              //オブジェクトを配列にpushし、それを９個配列内に集める
+              objectsArray.push(numObject);                
+            };//for文ここまで         
+                                      
+            //オブジェクトセットを配列内で並び替える。⇒数値をランダムに並び替える===============
+            objectsArray.sort((a,b)=>a.randNum - b.randNum);
+                           
+              
+            //各行のセルを配列に入れる（⇒各セルに乱数と対の値を当てはめていくため=================
+            cellsInRow = row.querySelectorAll("td");
+            //各セルのtextContentにインデックス番号ごとの値を当てはめていく
+            cellsInRow.forEach((cell,index) => {
+              cell.textContent = objectsArray[index].num;
+            });
+            //==============================================================================
+
+          })//rows.forEach  
+                 
+        }//function
+            
+        //バリデーション
+      </script>
+  </body>
+</html>
