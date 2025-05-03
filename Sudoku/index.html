@@ -51,10 +51,11 @@ forEachは「対象の配列・リストのすべての要素に、同じ処理�
       -->
 
       <script>
-
+        let board;
         const table = document.getElementById("sudoku");        
-        //CHAPTER1:盤面作成============================================
-        //テーブル自動作成のforループ=======================================
+        //CHAPTER1:HTMLの盤面作成=======================================
+        
+        //テーブル自動作成のforループ
         for (let row=0;row<9;row++) {
           //外側ループで各行を作成
           const tr = document.createElement("tr");
@@ -66,8 +67,11 @@ forEachは「対象の配列・リストのすべての要素に、同じ処理�
             //各セルにID(0~8)付与:カウンター変数の変動する値を入れて行列番号を入れる
             td.id = `cell-${row}-${col}`;
 
-            //データ属性（ブロック番号も0~8）
-            //データ属性を通じて各セルがどのブロックに属するかを計算して記録、設定          
+            //データ属性（ブロック番号:0~8）
+            //データ属性で各セルがどのブロックに属するかを計算する           
+            //行を3で割り（切捨）、それに3を掛ける⇒上中下いずれかに分けるために0,3,6になる必要がある。
+            //列を3で割る（切捨）ことで、左中右のいずれかのブロックに分けられる。     
+            //⇒この行列番号を足すことで、割り振ったブロック番号に導くことが出来る。
             const block = Math.floor(row/3)*3+Math.floor(col/3);
             td.dataset.block = block;
 
@@ -87,9 +91,121 @@ forEachは「対象の配列・リストのすべての要素に、同じ処理�
         //========================================================
 
 
+        //Chapter2=================================================
+        
+        //ロジック側の盤面（空白）を作成
+        window.addEventListener("load", ()=>{
+          //最初のArray.from（）で9行分の配列を作り、
+            //各行に対してさらにArray.from()でオブジェクトのセルを生成
+              //(_,row)や(_,col)でｲﾝﾃﾞｯｸｽを明示的に使ってblockを算出
+              board = Array.from({length:9}, (_, row) =>          
+              Array.from({length:9}, (_, col) => ({
+              value: 0,
+              block: Math.floor(row/3)*3+Math.floor(col/3)
+            }))
+          );                     
+          
+          for (let row=0;row<9;row++) {
+            for (let col=0;col<9;col++) {
+              const cell = document.getElementById(`cell-${row}-${col}`);
+              cell.textContent = board[row][col] === 0 ? "" : board[row][col].value;
+              //加えて各セルに属性を持たせる
+              const targetBlock = Math.floor(row/3)*3+Math.floor(col/3);
+              cell.dataset.block = targetBlock;
+            }
+          }
+        });
+        //============================================================
+
+
+        //Chapter3===================================================
+        //合法性チェック関数（このマスにこの数字を置いてもいいか？）
+
+        function isSafe(row,col,num) {
+          
+          //行チェック（ある行だけを確認するため、確認したい行を抽出して新しい配列を作る）
+          const targetRow = board[row].map(cell=>cell.value);
+          if (targetRow.includes(num)) return false;
+          
+          
+          //列チェック（boardから繰返し処理で同列の値を取得して新しい列を作り、確認）
+          const targetCol = board.map(r=>r[col].value);
+          if (targetCol.includes(num)) return false;
+          
+          //ブロックチェック  
+          
+          //ある行列のブロックナンバーを取得
+          const blockNum = Math.floor(row / 3) * 3 + Math.floor(col / 3);
+          const blockValues = [];
+          
+          
+            //2重ループで各セルに対する処理を実行
+            //ある行列のセルのブロックナンバーが対象と同じであるとき、
+              //
+          for (let i=0;i<9;i++) {
+            for (let j=0;j<9;j++) {
+              if (board[i][j].block === blockNum) {
+                blockValues.push(board[i][j].value);
+              }
+            }
+          }
+          //同ブロック内のセルに対象と同じ数字があれば、falseを返す
+          if (blockValues.includes(num)) return false;
+
+          return true;
+          }//isSafe()ここまで      
+        
+          
+        //Chapter4====================================================
+          //0~9の数字を毎回シャッフルする。
+            //Math.random()で0~1の乱数を出し、範囲を‐0.5~⁺0.5に変換
+        function shuffle(array) {
+          return array.sort(()=>Math.random() - 0.5);
+        }
+        //============================================================
+
+
+        //Chapter5====================================================
+          //バックトラッキング実装
+        function solve() {
+          for (let row=0;row<9;row++) {
+            for (let col=0;col<9;col++) {
+              //もしセルの値が0なら、
+              if (board[row][col].value === 0) {
+                let numbers = shuffle([1,2,3,4,5,6,7,8,9]);
+                for (let num of numbers) {
+                  if (isSafe(row,col,num)) {
+                    board[row][col].value = num;
+                    if (solve()) return true;
+                    board[row][col].value = 0; //バックトラック
+                  }//isSafe()のif文
+                }//num of numbersのfor文
+                return false; //どの数字もなければfalseを返す
+              }//boardのif文
+            }//colのif文
+          }//rowのif文
+          return true; //全部埋めたらtrue
+        }//solve()ここまで 
+        //==================================================================
+
+        //Chapter6=====================================================
+          //画面に表示
+        function renderBoard() {
+          for (let row=0;row<9;row++) {
+            for (let col=0;col<9;col++) {
+              const cell = document.getElementById(`cell-${row}-${col}`);
+              cell.textContent = board[row][col].value === 0 ? "" : board[row][col].value;
+            }
+          }
+        }
+
         //各セルに１～９の数字をランダムに表示するイベント==============
         
-        window.addEventListener("load", numSet);
+        window.addEventListener("load", ()=>{
+          //board生成、HTML繁栄の後
+          solve();//バックトラッキング開始
+          renderBoard();
+        });
               
 
         //１～９の数字を用意する。乱数を９つ用意して、ペアにする。
@@ -99,37 +215,11 @@ forEachは「対象の配列・リストのすべての要素に、同じ処理�
         
         
         //関数：セル全体に対する繰返し処理　=> ランダムな値（但し重複無し）を入れる==============
-        function numSet() {
-          const rows = table.querySelectorAll("tr");
-
-          //行単位の繰返し（大）
-          rows.forEach((row)=>{
-            let objectsArray = [];//オブジェクト群を入れる配列
-            let numObject = {};//繰返し番号と乱数を入れるオブジェクト
-            let cellsInRow = [];//各行のセルを入れる
-
-            //乱数の取得（ナンバリング変数と乱数をオブジェクトに入れる。）====================
-            for (let i=1;i<10;i++) {          
-              numObject = {num:i, randNum:Math.random()}
-              //オブジェクトを配列にpushし、それを９個配列内に集める
-              objectsArray.push(numObject);                
-            };//for文ここまで         
-                                      
-            //オブジェクトセットを配列内で並び替える。⇒数値をランダムに並び替える===============
-            objectsArray.sort((a,b)=>a.randNum - b.randNum);
-                           
-              
-            //各行のセルを配列に入れる（⇒各セルに乱数と対の値を当てはめていくため=================
-            cellsInRow = row.querySelectorAll("td");
-            //各セルのtextContentにインデックス番号ごとの値を当てはめていく
-            cellsInRow.forEach((cell,index) => {
-              cell.textContent = objectsArray[index].num;
-            });
-            //==============================================================================
-
-          })//rows.forEach  
+        
+        
                  
-        }//function
+      
+        
             
         //バリデーション
       </script>
