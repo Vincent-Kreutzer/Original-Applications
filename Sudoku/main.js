@@ -1,4 +1,12 @@
 //初期変数定義=============================================================
+const topMenu = document.getElementById("top-menu");
+const gameScreen = document.getElementById("game-screen");
+const startBtn = document.getElementById("start-btn");
+const retryBtn = document.getElementById("retry-btn");
+const backBtn = document.getElementById("back-btn");
+let lifePoints = 3;
+let maxLifePoint = 3;
+
 let table = document.getElementById("sudoku");
 let board;
 let selectedCell = null;
@@ -7,11 +15,74 @@ const counts = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
   
 //=================================================================
 
+
+//画面切り替え処理=============================================
+//トップ⇒ゲーム----------------------------
+startBtn.addEventListener("click", ()=>{
+  topMenu.style.display = "none";
+  gameScreen.style.display = "block";
+});
+
+//ゲーム⇒トップ-------------------------------
+backBtn.addEventListener("click", ()=>{
+  gameScreen.style.display = "none";
+  topMenu.style.display = "block";
+});
+//画面切り替え処理ここまで============================================
+
+//リトライ機能========================================================
+retryBtn.addEventListener("click", ()=> {
+  createBoardHTML();
+  solve();
+  renderBoard();
+  makePuzzle();
+  updateNumberButtons();
+  setEditableCellEvents();
+})
+
+//リトライ機能ここまで===============================
+
+//ゲームオーバー演出機能====================================
+function gameOver() {
+  const overlay = document.createElement("div");
+  overlay.id = "gameover-overlay";
+  overlay.innerHTML = `
+    <div class="gameover-message">
+      <h1>GAME OVER</h1>
+      <p>お手付きが上限に達しました。</p>
+      <button id="retry-from-over">もう一度挑戦</button>
+      <button id="back-to-menu">トップに戻る</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  document.getElementById("retry-from-over").addEventListener("click", ()=>{
+    overlay.remove();
+    retryBtn.click();
+    lifePoints = maxLifePoint;
+    updateLivesDisplay();
+    selectedCell = null;
+    selectedNum = null;
+  });
+
+  document.getElementById("back-to-menu").addEventListener("click", ()=>{
+    overlay.remove();
+    backBtn.click();
+    lifePoints = maxLifePoint;
+    updateLivesDisplay();
+    selectedCell = null;
+    selectedNum = null;
+  });
+}
+
+//ゲームオーバー演出機能ここまで============================
+
 //HTML描画系関数=======================================================
  
 //HTMLの盤面作成------------------------------------------------
 function createBoardHTML() {
   //テーブル自動作成のforループ
+  table.innerHTML = "";
   for (let row=0;row<9;row++) {
     //外側ループで各行を作成
     const tr = document.createElement("tr");
@@ -95,6 +166,11 @@ function showCompleteMessage() {
 
 //-----------------------------------------------------------
 
+//お手付き回数の現象を管理する関数-----------------------------
+function updateLivesDisplay() {
+  const livesDiv = document.getElementById("lives");
+  livesDiv.innerHTML = "❤".repeat(lifePoints)+"🤍".repeat(maxLifePoint-lifePoints);
+}
 //HTML描画系関数ここまで==========================================================
 
 
@@ -106,11 +182,10 @@ function shuffle(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
-}
-//shuffle()ここまで------------------------------------------------
+}//shuffle()ここまで------------------------------------------------
 
 
-  //isSafe()値の合法チェック---------------------------------------------------
+//isSafe() 値の合法チェック---------------------------------------------------
 function isSafe(row,col,num) {
          
   //行チェック（ある行だけを確認するため、確認したい行を抽出して新しい配列を作る）
@@ -167,9 +242,16 @@ function solve() {
 
 //makePuzzle()空白マス作成-----------------------------------
 function makePuzzle() {     
+  //まずcountsを初期化
+  for (let i = 1; i <= 9; i++) {
+    counts[i] = 0;
+  }
+  
   const allCells = [];//81個のセル全てを入れる配列
   const numToHide = 30;//問題にする数字の個数を変数化          
   const solutionBoard = [];//正解盤面用に二次元配列を作成
+
+  
 
   //盤面のランダム化、81個のセルを取得してまとめて配列に入れる。
   for (let row=0;row<9;row++) {
@@ -324,6 +406,14 @@ function checkAndConfirm() {
           incorrectSound.play();
           selectedCell.classList.add("incorrect");
           setTimeout(()=>{
+          
+          lifePoints--;
+          updateLivesDisplay();
+          if (lifePoints === 0) {
+            gameOver();
+            return;
+          }
+          
           if (selectedCell) selectedCell.classList.remove("incorrect");
             },1000);
         }
@@ -360,7 +450,7 @@ window.addEventListener("load", () => {
       block: Math.floor(row / 3) * 3 + Math.floor(col / 3)
     }))
   );
-
+  updateLivesDisplay();
   createBoardHTML();
   solve();
   renderBoard();

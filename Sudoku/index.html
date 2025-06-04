@@ -37,20 +37,35 @@ forEachは「対象の配列・リストのすべての要素に、同じ処理�
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <title>Original Sudoku App</title>
+    <title>Original Nanpure App</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Original Sudoku App</h1>
-    
-    <!--ナンプレ本体-->
-    <table id="sudoku"></table>
+    <section id="top-menu">
+      <h1>Original Sudoku App</h1>
+      <button id="start-btn">START</button>
+    </section>
 
-    <!--問題の選択肢となる数字パネル-->
-    <div id="number-panel" style="margin-top: 20px;"></div>
+    <section id="game-screen">
+      <h1>Original Sudoku App</h1>
+      <div id="conditions">
+        <div>
+          Life:
+          <div id="lives" class="lives-panel"></div>          
+        <p>time:</p>
+      </div>
+      <div id="control-buttons">
+        <button id="retry-btn">リトライ</button>
+        <button id="back-btn">戻る</button>
+      </div>
+      <!--ナンプレ本体-->
+      <table id="sudoku"></table>
 
+      <!--問題の選択肢となる数字パネル-->
+      <div id="number-panel" style="margin-top: 20px;"></div>
+    </section>
     <script type="text/javascript" src="main.js"></script>
   </body>
 </html>
