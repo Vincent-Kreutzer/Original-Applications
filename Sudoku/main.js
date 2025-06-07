@@ -1,6 +1,14 @@
 //初期変数定義=============================================================
+
 const topMenu = document.getElementById("top-menu");
 const gameScreen = document.getElementById("game-screen");
+
+let difficulty = "normal"; //難易度の初期値
+let numToHide = 30; //空白セルの数
+
+
+let startTime;
+let timerInterval;
 const startBtn = document.getElementById("start-btn");
 const retryBtn = document.getElementById("retry-btn");
 const backBtn = document.getElementById("back-btn");
@@ -16,21 +24,81 @@ const counts = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
 //=================================================================
 
 
-//画面切り替え処理=============================================
-//トップ⇒ゲーム----------------------------
+//画面状の各種演出=============================================
+
+//難易度選択機能----------------------------------------------
+
+  //難易度ボタンのクラスを取得して、それぞれにイベント処理を付与する
+document.querySelectorAll(".difficulty-btn").forEach(btn => {
+
+  btn.addEventListener("click", ()=>{
+    //既に選択されていたボタンからクラスを削除
+    document.querySelectorAll(".difficulty-btn").forEach(b => b.classList.remove("selected"));
+    //選ばれたボタンにクラスを追加（強調表示用）
+      btn.classList.add("selected");
+    
+      //difficultyとnumToHideを更新
+      difficulty = btn.getAttribute("data-difficulty");
+
+    //難易度に応じて空白数を決定
+    switch (difficulty) {
+      case "easy":
+        numToHide = 20;
+        break;
+      case "normal":
+        numToHide = 30;
+        break;
+      case "hard":
+        numToHide = 45;
+    }
+  })
+})
+//難易度選択機能ここまで----------------------------------------
+
+
+//タイマー表示機能-------------------------------
+startTime = Date.now();
+timerInterval = setInterval(updateTimer, 1000);
+
+function updateTimer() {
+  const now = Date.now();
+  const elapsedSeconds = Math.floor((now - startTime) / 1000);
+  document.getElementById("timer").textContent = `経過時間:${elapsedSeconds}秒`;
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+//トップ⇒ゲームへ戻る----------------------------
 startBtn.addEventListener("click", ()=>{
   topMenu.style.display = "none";
   gameScreen.style.display = "block";
+
+  //ライフ残基を回復
+  lifePoints = maxLifePoint;
+  updateLivesDisplay();
+  selectedCell = null;
+  selectedNum = null;
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+
+  createBoardHTML();
+  solve();
+  renderBoard();
+  makePuzzle(); // ← ここで numToHide が効く！
+  updateNumberButtons();
+  setEditableCellEvents();
+  updateLivesDisplay();
 });
 
-//ゲーム⇒トップ-------------------------------
+//ゲーム⇒トップへ戻る-------------------------------
 backBtn.addEventListener("click", ()=>{
   gameScreen.style.display = "none";
   topMenu.style.display = "block";
 });
-//画面切り替え処理ここまで============================================
 
-//リトライ機能========================================================
+//リトライ機能--------------------------------------
 retryBtn.addEventListener("click", ()=> {
   createBoardHTML();
   solve();
@@ -40,10 +108,12 @@ retryBtn.addEventListener("click", ()=> {
   setEditableCellEvents();
 })
 
-//リトライ機能ここまで===============================
 
-//ゲームオーバー演出機能====================================
+
+//ゲームオーバー演出機能---------------------------
 function gameOver() {
+  stopTimer();
+  
   const overlay = document.createElement("div");
   overlay.id = "gameover-overlay";
   overlay.innerHTML = `
@@ -75,7 +145,7 @@ function gameOver() {
   });
 }
 
-//ゲームオーバー演出機能ここまで============================
+//画面上の各種演出ここまで============================
 
 //HTML描画系関数=======================================================
  
@@ -248,7 +318,7 @@ function makePuzzle() {
   }
   
   const allCells = [];//81個のセル全てを入れる配列
-  const numToHide = 30;//問題にする数字の個数を変数化          
+ //問題個数を入れるnumToHide定数はコード上部へ移動          
   const solutionBoard = [];//正解盤面用に二次元配列を作成
 
   
@@ -331,7 +401,9 @@ function isPuzzleComplete() {
     return false;
     }          
   }
-  return true;
+
+  stopTimer();
+  return true;  
 }//isPuzzleComplete()ここまで-------------------------------------  
 
 //ゲームロジックここまで=========================================

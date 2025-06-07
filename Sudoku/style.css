@@ -15,6 +15,12 @@
 #sudoku {
   margin: 0 auto;
 }
+
+.difficulty-btn.selected {
+  background-color: #ffcc00;
+  color: black;
+  font-weight: bold;
+}
 #table {
   border-collapse: collapse; /*セル同士を密着させる*/
   

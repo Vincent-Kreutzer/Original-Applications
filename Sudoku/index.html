@@ -44,13 +44,23 @@ forEachは「対象の配列・リストのすべての要素に、同じ処理�
   </head>
   <body>
     <section id="top-menu">
-      <h1>Original Sudoku App</h1>
+      <h1>Original Sudoku Application</h1>
+      
+      <div id="difficulty-select">
+        <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+        <button class="difficulty-btn" data-difficulty="normal">Normal<Normal</button>
+        <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+      </div>
+      
       <button id="start-btn">START</button>
+
+
     </section>
 
     <section id="game-screen">
       <h1>Original Sudoku App</h1>
       <div id="conditions">
+        <div id="timer">経過時間：0秒</div>
         <div>
           Life:
           <div id="lives" class="lives-panel"></div>          
