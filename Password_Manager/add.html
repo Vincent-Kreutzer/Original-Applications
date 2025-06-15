@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>パスワード登録 | パスワード管理アプリ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/main.css">
+  </head>
+  <body>
+    <h1>新規パスワード登録</h1>
+
+    <form id="password-form">
+      <label for="site">サイト名:</label><br>
+      <input type="text" id="site" name="site" required><br><br>
+
+      <label for="loginId">ログインID:</label><br>
+      <input type="text" id="loginId" name="loginId" required><br><br>
+
+      <label for="password">パスワード:</label><br>
+      <input type="password" id="password" name="password" required><br><br>
+
+      <label for="memo">備考（任意）:</label><br>
+      <textarea id="memo" name="memo"></textarea><br><br>
+
+    </form>
+  
+    <div class="button-group">
+    <button type="submit">登録</button>      
+    <button onclick="window.location.href='index.html'" id="back-to-top">トップに戻る</button>
+     </div>
+     
+    <script src="scripts/add.js"></script>
+  </body>
+</html>

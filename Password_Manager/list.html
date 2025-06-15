@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>パスワード一覧 | パスワード管理アプリ</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/list.css">
+  </head>
+  <body>
+    <h1>パスワード一覧</h1>
+    <table id="password-body">
+      <thead>
+        <tr>
+          <th>サイト名</th>
+          <th>ID</th>
+          <th>パスワード</th>
+          <th>メモ</th>
+          <th>削除</th>        
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <!--javascriptでここにデータ行を追加していく。-->
+      </tbody>
+    </table>
+    <button onclick="window.location.href='index.html'" id="back-to-top">トップに戻る</button>
+    
+    <script src="scripts/list.js"></script>
+  </body>
+</html>

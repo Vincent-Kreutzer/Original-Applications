@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>新しい記録 - Re:Mind</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <h1>今日の気持ちを記録しよう</h1>
+
+    <form id="entry-form">
+      <!-- 日付（自動入力) --> 
+      <label for="date">日付:</label>
+      <input type="date" id="date" name="date" readonly />
+
+      <!-- 感情アイコン（喜怒哀楽）-->
+      <label>感情:</label>
+      <div class="emotion-options">
+        <label><input type="radio" name="emotion" value="happy" /><span>😊</span></label>
+        <label><input type="radio" name="emotion" value="sad" /><span>😢</span></label>
+        <label><input type="radio" name="emotion" value="angry" /><span>😠</span></label>
+        <label><input type="radio" name="emotion" value="anxious" /><span>😰</span></label>
+        <label><input type="radio" name="emotion" value="calm" /><span>😌</span></label>            
+      </div>
+
+      <!-- 感情の強さ（スライダー）-->
+      <label for="intensity">感情の強さ（1～5）:</label>
+      <input type="range" id="intensity" name="intensity" min="1" max="5" value="3" />
+
+      <!-- メモ -->
+      <label for="memo">気持ちの理由や出来事等など:</label>
+      <textarea id="memo" name="memo" rows="5" placeholder="自由に書いてみよう..."></textarea>
+
+      <!-- 送信　-->
+      <button type="submit">記録する</button>
+    </form>
+
+    <script src="scripts/main.js"></script>
+  </body>
+</html>

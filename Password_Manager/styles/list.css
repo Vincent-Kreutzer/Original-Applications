@@ -1,0 +1,25 @@
+
+/*パスワード列の文字を伏せて表示する(jsで切り替え可能）*/
+td.password {
+font-family: "Courier New", monospace;
+letter-spacing: 2px;
+color: #999;
+}
+
+td:last-child {
+  text-align: center;
+}
+button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+/*トップへ戻るボタンだけ右下に固定*/
+#back-to-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
