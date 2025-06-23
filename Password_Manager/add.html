@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -11,24 +13,60 @@
 
     <form id="password-form">
       <label for="site">サイト名:</label><br>
-      <input type="text" id="site" name="site" required><br><br>
+      <input type="text" id="site" name="site" placeholder="サイト名" required><br><br>
 
       <label for="loginId">ログインID:</label><br>
-      <input type="text" id="loginId" name="loginId" required><br><br>
+      <input type="text" id="loginId" name="loginId" placeholder="ログインID" required><br><br>
 
       <label for="password">パスワード:</label><br>
-      <input type="password" id="password" name="password" required><br><br>
+      <input type="password" id="password" name="password" placeholder="パスワード" required><br><br>
+      
+      <!-- 自動生成ボタン-->
+      <button type="button" id="open-modal">自動生成</button>
+
+      <!-- モーダルウインドウ-->       
+      <div id="password-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>パスワード自動生成</h2>
+
+          <div class="checkbox-container">
+            <div class="main-options">
+              <label><input type="checkbox" id="include-uppercase" name="upper-case" checked>英大文字</label><br>
+              <label><input type="checkbox" id="include-lowercase" name="lower-case" checked>英小文字</label><br>
+              <label><input type="checkbox" id="include-numbers" name="numbers" checked>数字</label><br>
+              <label><input type="checkbox" id="include-symbols" name="symbols">記号</label><br><br>
+            </div>
+              <!-- 記号選択の詳細オプション-->
+            <div id="symbol-options" style="display:none; margin-top: 10px;">
+              <label><input type="checkbox" class="symbols" value="!" name="!" checked>!</label>
+              <label><input type="checkbox" class="symbols" value="@" name="@" checked>@</label>
+              <label><input type="checkbox" class="symbols" value="#" name="#" checked>#</label>
+              <label><input type="checkbox" class="symbols" value="$" name="$" checked>$</label>
+              <label><input type="checkbox" class="symbols" value="%" name="%" checked>%</label>
+              <label><input type="checkbox" class="symbols" value="&" name="&" checked>&</label>
+              <label><input type="checkbox" class="symbols" value="*" name="*" checked>*</label>
+              <label><input type="checkbox" class="symbols" value="?" name="?" checked>?</label>
+            </div>            
+          </div>
+        
+          <label for="length">桁数: </label>
+          <input type="number" id="length" value="12" min="4" max="50"><br><br>
+          <button id="generate-password" type="button">パスワード生成</button>
+        </div>        
+                  
+        
+        
+      </div>
 
       <label for="memo">備考（任意）:</label><br>
       <textarea id="memo" name="memo"></textarea><br><br>
 
+      <button id="submit-btn" class=button-group type="submit">登録</button>      
     </form>
-  
-    <div class="button-group">
-    <button type="submit">登録</button>      
-    <button onclick="window.location.href='index.html'" id="back-to-top">トップに戻る</button>
-     </div>
-     
+            
+    <button onclick="window.location.href='index.html'" id="back-to-top" class="button-group">トップに戻る</button>
+         
     <script src="scripts/add.js"></script>
   </body>
 </html>
